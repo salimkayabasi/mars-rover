@@ -1,0 +1,23 @@
+{
+  "name": "mars-rover",
+  "homepage": "https://github.com/salimkayabasi/mars-rover",
+  "authors": [
+    "Salim KAYABAŞI <salim.kayabasi@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "~1.2.3"
+  }
+}
