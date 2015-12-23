@@ -1,0 +1,17 @@
+<dom-module id="mars-plateau">
+  <template>
+    <label>Col</label>
+    <input type="text" value="{{col::keyup}}">
+    <label>Row</label>
+    <input type="text" value="{{row::keyup}}">
+    <button on-click="generate">Generate</button>
+  </template>
+  <script>
+    Polymer({
+      is: 'mars-plateau',
+      generate: function () {
+        console.log('we will generate a plateau col', this.col, 'row', this.row);
+      }
+    })
+  </script>
+</dom-module>

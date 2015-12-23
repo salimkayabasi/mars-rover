@@ -17,7 +17,7 @@ gulp.task('clean', del.sync.bind(null, ['.tmp', '.publish', 'dist']));
 
 gulp.task('copy', function (cb) {
   var app = gulp.src([
-    'app/*'
+    'app/**/*'
   ], {
     dot: true
   }).pipe(gulp.dest('dist'));
