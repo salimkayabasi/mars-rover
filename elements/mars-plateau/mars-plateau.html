@@ -1,16 +1,44 @@
 <dom-module id="mars-plateau">
   <template>
-    <label>Col</label>
+    <label>X</label>
     <input type="text" value="{{col::keyup}}">
-    <label>Row</label>
+    <label>Y</label>
     <input type="text" value="{{row::keyup}}">
     <button on-click="generate">Generate</button>
+    <table>
+      <template is="dom-repeat" items="{{rows}}" as="y">
+        <tr>
+          <template is="dom-repeat" items="{{cols}}" as="x">
+            <td>{{x}}, {{y}}</td>
+          </template>
+        </tr>
+      </template>
+    </table>
   </template>
+  <style>
+    table {
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+      padding: 15px;
+    }
+  </style>
   <script>
     Polymer({
       is: 'mars-plateau',
+      ready: function () {
+        this.generate();
+      },
+      getDimension: function (len) {
+        return Array.apply(null, {length: Number(len) + 1})
+            .map(Number.call, Number);
+      },
       generate: function () {
-        console.log('we will generate a plateau col', this.col, 'row', this.row);
+        this.cols = this.getDimension(this.col);
+        this.rows = this.getDimension(this.row).reverse();
       }
     })
   </script>
