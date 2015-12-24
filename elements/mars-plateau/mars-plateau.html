@@ -1,15 +1,32 @@
 <dom-module id="mars-plateau">
   <template>
-    <label>X</label>
-    <input type="text" value="{{col::keyup}}">
-    <label>Y</label>
-    <input type="text" value="{{row::keyup}}">
-    <button on-click="generate">Generate</button>
+    <p>
+
+      <label>X</label>
+      <input type="text" value="{{col::keyup}}">
+      <label>Y</label>
+      <input type="text" value="{{row::keyup}}">
+      <button on-click="generate">Generate</button>
+    </p>
+    <p>
+      <label>Rover</label>
+      <input type="text" value="{{landing::keyup}}">
+      <button on-click="land">Land</button>
+    </p>
+    <p>
+      <label>Movement</label>
+      <input type="text" value="{{movement::keyup}}">
+      <button on-click="go">Go</button>
+    </p>
     <table>
       <template is="dom-repeat" items="{{rows}}" as="y">
         <tr>
           <template is="dom-repeat" items="{{cols}}" as="x">
-            <td>{{x}}, {{y}}</td>
+            <td>
+              <iron-icon hidden$="{{checkRover(x, y)::land}}"
+                         src="/arrow.png"></iron-icon>
+              {{x}}, {{y}}
+            </td>
           </template>
         </tr>
       </template>
@@ -29,6 +46,10 @@
   <script>
     Polymer({
       is: 'mars-plateau',
+      properties: {
+        col: Number,
+        row: Number
+      },
       ready: function () {
         this.generate();
       },
@@ -37,8 +58,96 @@
             .map(Number.call, Number);
       },
       generate: function () {
+        this.coords = [this.col, this.row];
         this.cols = this.getDimension(this.col);
         this.rows = this.getDimension(this.row).reverse();
+      },
+      checkRover: function (x, y) {
+        return !(this.rover && this.rover.x === x && this.rover.y === y);
+      },
+      go: function () {
+        var movement = this.movement;
+        var rover = this.rover;
+        if (rover && movement && movement.length) {
+          var commands = movement.split(' ').join('').split('');
+          if (commands && commands.length) {
+            commands.forEach(function (command) {
+              rover.run(command);
+            });
+            this.log();
+          }
+        }
+      },
+      log: function () {
+        alert('Rover is landed on ['
+            + this.rover.x + ', '
+            + this.rover.y + '] to '
+            + this.rover.direction + ' way');
+      },
+      land: function () {
+        var landing = this.landing;
+        var errMsg = 'check the given commands';
+        if (landing && landing.length) {
+          var commands = landing.split(' ').join('').split('');
+          if (commands.length !== 3) {
+            alert(errMsg);
+            return;
+          }
+          var directions = ['N', 'E', 'S', 'W'];
+          if (directions.indexOf(commands[2]) === -1) {
+            alert(errMsg);
+            return;
+          }
+          var limit = {x: this.coords[0], y: this.coords[1]};
+          this.rover = {
+            limit: limit,
+            x: commands[0],
+            y: commands[1],
+            direction: commands[2],
+            changeDirection: function (command) {
+              var index = directions.indexOf(this.direction);
+              if (command === 'R') {
+                index++;
+              } else if (command === 'L') {
+                index--;
+              }
+              var len = directions.length;
+              this.direction = directions[(index + len) % len];
+            },
+            run: function (command) {
+              if (command === 'L' || command === 'R') {
+                this.changeDirection(command);
+              } else if (command === 'M') {
+                switch (this.direction) {
+                  case 'N':
+                    if (this.y !== this.limit.y) {
+                      this.y++;
+                    }
+                    break;
+                  case 'E':
+                    if (this.x !== this.limit.x) {
+                      this.x++;
+                    }
+                    break;
+                  case 'S':
+                    if (this.y !== 0) {
+                      this.y--;
+                    }
+                    break;
+                  case 'W':
+                    if (this.x !== 0) {
+                      this.x--;
+                    }
+                    break;
+
+                }
+              }
+            }
+          };
+          this.log();
+        } else {
+          alert(errMsg);
+        }
       }
     })
   </script>
